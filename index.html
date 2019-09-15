@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Demo roulette</title>
+	<script src="./src/index.js"></script>
+</head>
+<body>
+	<button>change state</button>
+	<canvas id="circle"></canvas>
+	<style>
+		canvas {
+			width: 580px;
+			height: 580px;
+		}
+	</style>
+	<script>
+		var roulette = new Roulette();
+		roulette.draw([
+			{ gradient: { start: '#8bc34a', end: '#4b6b26'}, percent: 20 },
+			{ gradient: { start: '#f86d29', end: '#f14a34'}, percent: 70 },
+			{ gradient: { start: '#504ce3', end: '#5041d5'}, percent: 10 }
+		]);
+
+		var element = document.getElementsByTagName('button');
+		element[0].onclick = function() {
+			roulette.setState(!roulette.state);
+		}
+	</script>
+</body>
+</html>
