@@ -29,6 +29,13 @@ roulette.draw([
   { gradient: { start: '#504ce3', end: '#5041d5'}, percent: 10 }
 ]);
 ```
+Вместо градиента можно использовать обычный цвет:
+```
+roulette.draw([
+  { color: '#8bc34a', percent: 100 }
+]);
+```
+
 
 3. setState - меняеть состояние колеса: **false** (половина)/**true** (полное), только **boolean** значение.
 ```
