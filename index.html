@@ -6,24 +6,55 @@
 </head>
 <body>
 	<button>change state</button>
+	<button>rotate</button>
 	<canvas id="circle"></canvas>
 	<style>
 		canvas {
-			width: 580px;
-			height: 580px;
+			position: absolute;
+			width: 500px;
+			height: 250px;
+		}
+		#circle {
+			z-index: 1;
+		}
+		#circle_select {
+			z-index: 2;
+		}
+		#circle_timer {
+			z-index: 3;
 		}
 	</style>
 	<script>
-		var roulette = new Roulette();
-		roulette.draw([
-			{ gradient: { start: '#8bc34a', end: '#4b6b26'}, percent: 20 },
-			{ gradient: { start: '#f86d29', end: '#f14a34'}, percent: 70 },
-			{ gradient: { start: '#504ce3', end: '#5041d5'}, percent: 10 }
+		var roulette = new Roulette({
+			id: 'circle',
+			timeCircleAnimation: 10000,
+		});
+		roulette.drawRoulette([
+			{ gradient: { start: '#cb32e9', end: '#b827e1'}, percent: 100, imgSrc: 'https://mdn.mozillademos.org/files/5397/rhino.jpg'  },
 		]);
+		// roulette.draw([
+		// 	{ gradient: { start: '#8bc34a', end: '#4b6b26'}, percent: 10 },
+		// 	{ gradient: { start: '#f86d29', end: '#f14a34'}, percent: 90 },
+		// ]);
 
 		var element = document.getElementsByTagName('button');
+
 		element[0].onclick = function() {
-			roulette.setState(!roulette.state);
+			roulette.drawRoulette([
+				{ gradient: { start: '#ffaf0e', end: '#ff900b'}, percent: 20, imgSrc: 'https://tinyfac.es/data/avatars/475605E3-69C5-4D2B-8727-61B7BB8C4699-500w.jpeg'  },
+				{ gradient: { start: '#9cdd31', end: '#7ad026'}, percent: 30, imgSrc: 'https://randomuser.me/api/portraits/men/46.jpg'  },
+				{ gradient: { start: '#24d8b9', end: '#1cc89e'}, percent: 15, imgSrc: 'https://images-na.ssl-images-amazon.com/images/M/MV5BMjA3NjYzMzE1MV5BMl5BanBnXkFtZTgwNTA4NDY4OTE@._V1_UX172_CR0,0,172,256_AL_.jpg'  },
+				{ gradient: { start: '#23b5e9', end: '#1b9ae1'}, percent: 5, imgSrc: 'https://mdn.mozillademos.org/files/5397/rhino.jpg'  },
+				{ gradient: { start: '#f1339c', end: '#eb287a'}, percent: 10, imgSrc: 'https://randomuser.me/api/portraits/men/1.jpg'  },
+				{ gradient: { start: '#cb32e9', end: '#b827e1'}, percent: 20, imgSrc: 'https://tinyfac.es/data/avatars/AEF44435-B547-4B84-A2AE-887DFAEE6DDF-200w.jpeg'  },
+			]);
+		}
+
+		element[1].onclick = function() {
+			roulette.rotateRoulette({
+				timeStarted: 1000,
+				angle: 2160,
+			});
 		}
 	</script>
 </body>
