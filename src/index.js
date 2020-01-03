@@ -7,18 +7,23 @@ class Roulette {
 
         this.PI = Math.PI;
         this.state = 0;
+        this.isAnimate = false;
         this.sectorLength = this.PI/200; // отступ между зонами
-        this.innerRadius = 156; // радиус внутреннего круга
         this.decorateBorder = 18; // высота декоративрого бордера
         this.timerBorder = 4; // высота бордера таймера
         this.timerBorderColor = '#ffc30b'; // цвет бордеа таймера
         this.borderColor = 'rgba(0, 0, 0, 0.08)'; // цвет внешнего бордера
         this.timeCircleAnimation = timeCircleAnimation; // время анимации вращения круга
         this.paddingTop = 15; // отступ сверху
-        this.lineWidth = this.canvas.height - this.innerRadius - this.paddingTop;
-        this.radius = this.innerRadius + this.lineWidth/2;
+        this.initProps();
 
         this.players = [];
+    }
+
+    initProps() {
+        this.innerRadius = this.canvas.height * 0.624; // радиус внутреннего круга
+        this.lineWidth = this.canvas.height - this.innerRadius - this.paddingTop;
+        this.radius = this.innerRadius + this.lineWidth/2;
     }
 
     circle(ctx, from, to, color, r = this.radius, lineWidth = this.lineWidth) {
@@ -30,7 +35,7 @@ class Roulette {
     }
 
     text(ctx, x, y, text) {
-        ctx.font = '14px sans-serif';
+        ctx.font = (this.canvas.height > 200) ? '14px sans-serif' : '10px sans-serif';
         ctx.fillStyle = '#fff';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
@@ -93,6 +98,7 @@ class Roulette {
     animate({timing, timeStarted = 0, draw, duration}) {
         return new Promise((resolve) => {
             const start = performance.now() - timeStarted;
+            this.isAnimate = true;
 
             const animate = (time) => {
                 let timeFraction = (time - start) / duration;
@@ -109,6 +115,7 @@ class Roulette {
                 if (timeFraction < 1) {
                     requestAnimationFrame(animate);
                 } else {
+                    this.isAnimate = false;
                     resolve();
                 }
             }
@@ -309,6 +316,11 @@ class Roulette {
     outerBorder() {
         const r = this.canvas.height - this.decorateBorder / 2;
         this.circle(this.ctx, this.borderState, 2*this.PI, this.borderColor, r, this.decorateBorder + 1);
+    }
+
+    redraw() {
+        this.initProps();
+        !this.isAnimate && this.drawCircle(null, this.players, 1, 0);
     }
 
     clear() {
