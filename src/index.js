@@ -151,7 +151,7 @@ class Roulette {
             if (players == undefined) {
                 players = this.players; // если нет новых игроков, подтягиваем их из состояния
             } else {
-                imagesLoaded = 0; // количество загруженных изображений
+                players[0].imgSrc && (imagesLoaded = 0); // количество загруженных изображений
                 this.players = players;
             }
 
@@ -202,6 +202,7 @@ class Roulette {
     async drawRoulette(players, state = 0) {
         const previousPlayers = this.copyArray(this.players);
         const currentPlayers = await this.updatePlayersData(players, state);
+        console.log(currentPlayers);
 
         if (previousPlayers.length !== 0) {
             await this.animate({
@@ -252,7 +253,7 @@ class Roulette {
 
             // если доля игрока больше 5 процентов, то рисуем его процент и аватар
             // при условии, что колесо свернуто
-            if (currPlayer.percent > 5 && this.state === 0) {
+            if (currPlayer.percent > 5 && this.state === 0 && currPlayer.img) {
                 this.drawPercent(this.ctx, from, to);
                 this.drawUserAvatar(this.ctx, from, to, currPlayer.img);
             }
@@ -266,7 +267,7 @@ class Roulette {
         if (this.state === 1) {
             rotate = rotate || 0;
             const img = this.getCurrentPlayerImg(currentPlayers, rotate);
-            this.drawUserAvatar(this.ctx, 3 / 2 * this.PI, 3 / 2 * this.PI, img);
+            img && this.drawUserAvatar(this.ctx, 3 / 2 * this.PI, 3 / 2 * this.PI, img);
         }
 
         // отрисовываем блок селекта
