@@ -27,7 +27,7 @@
 	<script>
 		var roulette = new Roulette({
 			id: 'circle',
-			timeCircleAnimation: 10000,
+			timeCircleAnimation: 25000,
 		});
 		roulette.drawRoulette([
 			{ gradient: { start: '#8bc34a', end: '#4b6b26'}, percent: 100 }
@@ -52,8 +52,8 @@
 
 		element[1].onclick = function() {
 			roulette.rotateRoulette({
-				timeStarted: 1000,
-				angle: 2160,
+				timeStarted: 2,
+				angle: 2931.34,
 			});
 		}
 
