@@ -8,6 +8,7 @@
 	<button>change state</button>
 	<button>rotate</button>
 	<button>redraw</button>
+	<button>reset</button>
 	<canvas id="circle" width="600" height="300"></canvas>
 	<style>
 		canvas {
@@ -58,7 +59,13 @@
 
 		element[2].onclick = function() {
 			console.log(roulette.isAnimate);
+			document.getElementById("circle").setAttribute("height", "400");
+			document.getElementById("circle").setAttribute("width", "800");
 			roulette.redraw();
+		}
+
+		element[3].onclick = function() {
+			roulette.reset();
 		}
 	</script>
 </body>

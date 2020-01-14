@@ -15,14 +15,32 @@ class Roulette {
         this.borderColor = 'rgba(0, 0, 0, 0.08)'; // цвет внешнего бордера
         this.timeCircleAnimation = timeCircleAnimation; // время анимации вращения круга
         this.paddingTop = 15; // отступ сверху
+
         this.initProps();
 
         this.players = [];
     }
 
+    get propertis() {
+        return {
+          width: window.devicePixelRatio && (window.devicePixelRatio > 1) ? this.canvas.width / 2: this.canvas.width,
+          height: window.devicePixelRatio && (window.devicePixelRatio > 1) ? this.canvas.height / 2: this.canvas.height,
+        }
+    }
+
     initProps() {
-        this.innerRadius = this.canvas.height * 0.624; // радиус внутреннего круга
-        this.lineWidth = this.canvas.height - this.innerRadius - this.paddingTop;
+        if (window.devicePixelRatio > 1) {
+            var canvasWidth = this.canvas.width;
+            var canvasHeight = this.canvas.height;
+        
+            this.canvas.width = canvasWidth * window.devicePixelRatio;
+            this.canvas.height = canvasHeight * window.devicePixelRatio;
+            this.canvas.style.width = canvasWidth + 'px';
+            this.canvas.style.height = canvasHeight + 'px';
+        }
+
+        this.innerRadius = this.propertis.height * 0.624; // радиус внутреннего круга
+        this.lineWidth = this.propertis.height - this.innerRadius - this.paddingTop;
         this.radius = this.innerRadius + this.lineWidth/2;
     }
 
@@ -35,7 +53,7 @@ class Roulette {
     }
 
     text(ctx, x, y, text) {
-        ctx.font = (this.canvas.height > 200) ? '14px sans-serif' : '10px sans-serif';
+        ctx.font = (this.propertis.height > 200) ? '14px sans-serif' : '10px sans-serif';
         ctx.fillStyle = '#fff';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
@@ -59,7 +77,7 @@ class Roulette {
     }
 
     drawPercent(ctx, from, to) {
-        const x = this.innerRadius - this.paddingTop + (this.canvas.height - this.innerRadius) / 2;
+        const x = this.innerRadius - this.paddingTop + (this.propertis.height - this.innerRadius) / 2;
         const angle = from + (to - from) / 2;
         const coordX = x * Math.cos(angle);
         const coordY = x * Math.sin(angle);
@@ -69,7 +87,7 @@ class Roulette {
     }
 
     drawUserAvatar(ctx, from, to, img) {
-        const x = this.canvas.height - this.paddingTop;
+        const x = this.propertis.height - this.paddingTop;
         const angle = from + (to - from) / 2;
         const coordX = x * Math.cos(angle);
         const coordY = x * Math.sin(angle);
@@ -88,7 +106,7 @@ class Roulette {
     }
 
     gradient(start, end) {
-        let grad = this.ctx.createRadialGradient(0, 0, this.innerRadius, 0, 0, this.canvas.height - this.paddingTop);
+        let grad = this.ctx.createRadialGradient(0, 0, this.innerRadius, 0, 0, this.propertis.height - this.paddingTop);
         grad.addColorStop(0, start);
         grad.addColorStop(1, end);
 
@@ -112,14 +130,14 @@ class Roulette {
     
                 draw(progress);
     
-                if (timeFraction < 1) {
+                if (timeFraction < 1 && this.isAnimate) {
                     requestAnimationFrame(animate);
                 } else {
                     this.isAnimate = false;
                     resolve();
                 }
             }
-          
+            
             requestAnimationFrame(animate);
         });
     }
@@ -172,8 +190,6 @@ class Roulette {
                 // если указан градиент - получаем его
                 if (!player.color && player.gradient ) {
                     player.color = this.gradient(player.gradient.start, player.gradient.end);
-
-                    delete player.gradient;
                 }
     
                 // если указана ссылка на изображение, то загружаем ее
@@ -202,7 +218,6 @@ class Roulette {
     async drawRoulette(players, state = 0) {
         const previousPlayers = this.copyArray(this.players);
         const currentPlayers = await this.updatePlayersData(players, state);
-        console.log(currentPlayers);
 
         if (previousPlayers.length !== 0) {
             await this.animate({
@@ -228,6 +243,7 @@ class Roulette {
         }
 
         this.ctx.rotate(rotate * this.PI / 180);
+        console.log(rotate);
 
         // рисуем каждый сектор
         for (let i = 0; i < currentPlayers.length; i++) {
@@ -246,7 +262,7 @@ class Roulette {
                 ? prevPlayer.to + (currPlayer.to - prevPlayer.to) * progress
                 : currPlayer.to;
 
-            const r = this.canvas.height - this.paddingTop - this.decorateBorder / 2; // радиус для внешнего бордера
+            const r = this.propertis.height - this.paddingTop - this.decorateBorder / 2; // радиус для внешнего бордера
 
             this.circle(this.ctx, from, to, currPlayer.color); // рисуем сектор
             this.circle(this.ctx, from, to, this.borderColor, r, this.decorateBorder); // рисуем бордер для сектора
@@ -260,8 +276,8 @@ class Roulette {
         }
 
         // сбрасываем матрницу трансформации и выставляем новый транслейт
-        this.ctx.setTransform(1, 0, 0, 1, 0, 0);
-        this.ctx.translate(this.canvas.width / 2, this.canvas.height);
+        this.setTransform();
+        this.setTranslate();
 
         // если вращение началось, то показываем текущего игрока
         if (this.state === 1) {
@@ -315,18 +331,41 @@ class Roulette {
     }
 
     outerBorder() {
-        const r = this.canvas.height - this.decorateBorder / 2;
+        const r = this.propertis.height - this.decorateBorder / 2;
         this.circle(this.ctx, this.borderState, 2*this.PI, this.borderColor, r, this.decorateBorder + 1);
+    }
+
+    updatePlayerGradient(players) {
+        for(let i = 0; i < players.length; i++) {
+            players[i].color = this.gradient(players[i].gradient.start, players[i].gradient.end);
+        }
+
+        return players;
     }
 
     redraw() {
         this.initProps();
-        !this.isAnimate && this.drawCircle(null, this.players, 1, 0);
+
+        const players = this.updatePlayerGradient(this.players);
+        !this.isAnimate && this.drawCircle(null, players, 1, 0);
+    }
+
+    setTransform() {
+        const pr = window.devicePixelRatio || 1;
+        this.ctx.setTransform(pr, 0, 0, pr, 0, 0);
+    }
+
+    setTranslate() {
+        this.ctx.translate(this.propertis.width / 2, this.propertis.height);
+    }
+
+    reset() {
+        this.isAnimate = false;
     }
 
     clear() {
-        this.ctx.setTransform(1, 0, 0, 1, 0, 0);
-        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        this.ctx.translate(this.canvas.width / 2, this.canvas.height);
+        this.setTransform();
+        this.ctx.clearRect(0, 0, this.propertis.width, this.propertis.height);
+        this.setTranslate();
     }
 }
