@@ -76,14 +76,22 @@ class Roulette {
         ctx.stroke();
     }
 
-    drawPercent(ctx, from, to) {
+    drawPercent(ctx, from, to, percent) {
         const x = this.innerRadius - this.paddingTop + (this.propertis.height - this.innerRadius) / 2;
         const angle = from + (to - from) / 2;
         const coordX = x * Math.cos(angle);
         const coordY = x * Math.sin(angle);
-        const percent = ((to - from) * 100 / this.PI).toFixed(1);
 
+        this.ctx.shadowColor = 'rgba(0, 0, 0, 0.2)';
+        this.createShadow(0, 2, 2);
         this.text(ctx, coordX, coordY, `${percent}%`);
+        this.createShadow(0, 0, 0);
+    }
+
+    createShadow(x, y, r) {
+        this.ctx.shadowOffsetX = x;
+        this.ctx.shadowOffsetY = y;
+        this.ctx.shadowBlur = r;
     }
 
     drawUserAvatar(ctx, from, to, img) {
@@ -270,7 +278,7 @@ class Roulette {
             // если доля игрока больше 5 процентов, то рисуем его процент и аватар
             // при условии, что колесо свернуто
             if (currPlayer.percent > 5 && this.state === 0 && currPlayer.img) {
-                this.drawPercent(this.ctx, from, to);
+                this.drawPercent(this.ctx, from, to, currPlayer.percent);
                 this.drawUserAvatar(this.ctx, from, to, currPlayer.img);
             }
         }
