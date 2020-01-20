@@ -171,7 +171,7 @@ class Roulette {
 
     updatePlayersData(players, state) {
         return new Promise((resolve) => {
-            let end = 2 * this.PI; // конец секторов
+            let end = (state === 0) ? 2 * this.PI : 3 * this.PI;
             let imagesLoaded;
 
             if (players == undefined) {
@@ -251,7 +251,6 @@ class Roulette {
         }
 
         this.ctx.rotate(rotate * this.PI / 180);
-        console.log(rotate);
 
         // рисуем каждый сектор
         for (let i = 0; i < currentPlayers.length; i++) {
@@ -299,8 +298,7 @@ class Roulette {
     }
 
     getCurrentPlayerImg(players, rotate) {
-        // вычисляем угол текущего игрока
-        const angle = (3 * this.PI / 2 - rotate * this.PI / 180) % (2 * this.PI);
+        const angle = 3 * this.PI - (rotate * this.PI / 180 + 3 * this.PI / 2) % (2 * this.PI);
 
         // находим его индекс
         const i = players.findIndex((player) => {
@@ -315,24 +313,25 @@ class Roulette {
         const currentPlayers = await this.updatePlayersData(null, 1);
 
         // развертываем колесо
-        !timeStarted && await this.animate({
-            duration: 200,
+        (timeStarted < 100) && await this.animate({
+            duration: 100,
             timing: (t) => {
                 return t;
             },
             draw: (progress) => {
                 this.drawCircle(previousPlayers, currentPlayers, progress);
             },
+            timeStarted,
         });
  
         // вращаем
         await this.animate({
-            duration: this.timeCircleAnimation - 200,
+            duration: this.timeCircleAnimation - 100,
             timing: (t) => {
-                return t * (2 - t);
+                return 1 - --t * t * t * t;
             },
             draw: (progress) => {
-                this.drawCircle(previousPlayers, currentPlayers, 1, -angle * progress);
+                this.drawCircle(previousPlayers, currentPlayers, 1, angle * progress);
             },
             timeStarted,
         });

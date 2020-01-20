@@ -27,7 +27,7 @@
 	<script>
 		var roulette = new Roulette({
 			id: 'circle',
-			timeCircleAnimation: 25000,
+			timeCircleAnimation: 6000,
 		});
 		roulette.drawRoulette([
 			{ gradient: { start: '#8bc34a', end: '#4b6b26'}, percent: 100 }
@@ -42,14 +42,16 @@
 		element[0].onclick = function() {
 			roulette.drawRoulette([
 				{ gradient: { start: '#ffaf0e', end: '#ff900b'}, percent: 20, imgSrc: 'https://tinyfac.es/data/avatars/475605E3-69C5-4D2B-8727-61B7BB8C4699-500w.jpeg'  },
-				{ gradient: { start: '#9cdd31', end: '#7ad026'}, percent: 80, imgSrc: 'https://randomuser.me/api/portraits/men/46.jpg'  },
+				{ gradient: { start: '#9cdd31', end: '#7ad026'}, percent: 30, imgSrc: 'https://randomuser.me/api/portraits/men/46.jpg'  },
+				{ gradient: { start: '#000', end: '#ff900b'}, percent: 10, imgSrc: 'https://tinyfac.es/data/avatars/475605E3-69C5-4D2B-8727-61B7BB8C4699-500w.jpeg'  },
+				{ gradient: { start: '#212121', end: '#7ad026'}, percent: 40, imgSrc: 'https://randomuser.me/api/portraits/men/46.jpg'  },
 			]);
 		}
 
 		element[1].onclick = function() {
 			roulette.rotateRoulette({
 				timeStarted: 2,
-				angle: 2931.34,
+				angle: 1200,
 			});
 		}
 
