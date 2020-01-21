@@ -122,9 +122,9 @@ class Roulette {
     }
 
     animate({timing, timeStarted = 0, draw, duration}) {
+        console.log('animate');
         return new Promise((resolve) => {
             const start = performance.now() - timeStarted;
-            this.isAnimate = true;
 
             const animate = (time) => {
                 let timeFraction = (time - start) / duration;
@@ -137,16 +137,20 @@ class Roulette {
                 }
     
                 draw(progress);
-    
-                if (timeFraction < 1 && this.isAnimate) {
-                    requestAnimationFrame(animate);
+                
+                console.log(this.rafId);
+                if (timeFraction < 1 && this.rafId) {
+                    this.rafId = requestAnimationFrame(animate);
                 } else {
+                    this.rafId = 0;
                     this.isAnimate = false;
                     resolve();
                 }
             }
             
-            requestAnimationFrame(animate);
+            cancelAnimationFrame(this.rafId);
+            this.rafId = requestAnimationFrame(animate);
+            this.isAnimate = true;
         });
     }
 
@@ -223,22 +227,22 @@ class Roulette {
         });
     }
 
-    async drawRoulette(players, state = 0) {
+    async drawRoulette(players, noAnimate = false) {
         const previousPlayers = this.copyArray(this.players);
-        const currentPlayers = await this.updatePlayersData(players, state);
+        const currentPlayers = await this.updatePlayersData(players, 0);
 
-        if (previousPlayers.length !== 0) {
+        if (previousPlayers.length !== 0 && noAnimate === false) {
             await this.animate({
                 duration: 200,
                 timing(timeFraction) {
                     return timeFraction;
                 },
                 draw: (progress) => {
-                    this.drawCircle(previousPlayers, currentPlayers, progress);
+                    this.drawCircle(previousPlayers, currentPlayers, progress, 0);
                 },
             });
         } else {
-            this.drawCircle(previousPlayers, currentPlayers);
+            this.drawCircle(previousPlayers, currentPlayers, 1, 0);
         }
     }
 

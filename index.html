@@ -9,6 +9,8 @@
 	<button>rotate</button>
 	<button>redraw</button>
 	<button>reset</button>
+	<button>STATE 1</button>
+	<button>STATE 2</button>
 	<canvas id="circle" width="600" height="300"></canvas>
 	<style>
 		canvas {
@@ -56,7 +58,6 @@
 		}
 
 		element[2].onclick = function() {
-			console.log(roulette.isAnimate);
 			document.getElementById("circle").setAttribute("height", "400");
 			document.getElementById("circle").setAttribute("width", "800");
 			roulette.redraw();
@@ -64,6 +65,18 @@
 
 		element[3].onclick = function() {
 			roulette.reset();
+		}
+
+		element[4].onclick = async function() {
+			// roulette.reset();
+			roulette.drawRoulette([
+				{ gradient: { start: '#ffaf0e', end: '#ff900b'}, percent: 10, imgSrc: 'https://tinyfac.es/data/avatars/475605E3-69C5-4D2B-8727-61B7BB8C4699-500w.jpeg'  },
+				{ gradient: { start: '#9cdd31', end: '#7ad026'}, percent: 90, imgSrc: 'https://randomuser.me/api/portraits/men/46.jpg'  },
+			], true);
+			roulette.rotateRoulette({
+				timeStarted: 1000,
+				angle: 1900,
+			})
 		}
 	</script>
 </body>
