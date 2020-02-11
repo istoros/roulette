@@ -362,7 +362,7 @@ class Roulette {
     }
 
     setTransform() {
-        const pr = window.devicePixelRatio || 1;
+        const pr = (window.devicePixelRatio && 2) || 1;
         this.ctx.setTransform(pr, 0, 0, pr, 0, 0);
     }
 
