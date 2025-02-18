@@ -1,24 +1,24 @@
 # Roulette Canvas
 
-Создание экземпляра класса:
+Creating an Instance:
 ```
 const roulette = new Roulette({
- id: 'circle', // id канваса
- timeCircleAnimation: 10000, // общая длительность анимации вращения колеса в ms
+ id: 'circle', // Canvas ID
+ timeCircleAnimation: 10000, // Total duration of the wheel rotation animation in ms
 });;
 ```
 
-### Конструктор:
-- Отступ между секторами: ```this.sectorLength = this.PI/200;```
-- Радиус внутреннего круга: ```this.innerRadius = 156;```
-- Высота декоративрого бордера: ```this.decorateBorder = 18;```
-- Высота бордера таймера: ```this.timerBorder = 4;```
-- Цвет бордеа таймера: ```this.timerBorderColor = '#ffc30b';``` 
-- Цвет внешнего бордера: ```this.borderColor = 'rgba(0, 0, 0, 0.08)';``` 
-- Отступ сверху: ```this.paddingTop = 15;```
+### Constructor:
+- Gap between sectors: ```this.sectorLength = this.PI/200;```
+- Inner circle radius: ```this.innerRadius = 156;```
+- Decorative border height: ```this.decorateBorder = 18;```
+- Timer border height: ```this.timerBorder = 4;```
+- Timer border color: ```this.timerBorderColor = '#ffc30b';``` 
+- Outer border color: ```this.borderColor = 'rgba(0, 0, 0, 0.08)';``` 
+- Top padding: ```this.paddingTop = 15;``` 
 
-### Методы:
-1. **.drawRoulette** - отрисовывает колесо с информацией о секторах, суммарный "percent" должен быть равен 100. В аргументах нужен массив объектов, даже если этот объект один. Вместо градиента можно использовать обычный цвет. Возвращает промис окончания загузки изобрежений и анимации.
+### Methods:
+1. **.drawRoulette** - Draws the wheel with sector information. The total "percent" must be equal to 100. The argument requires an array of objects, even if there is only one object. Instead of a gradient, a solid color can be used. Returns a promise that resolves when images are loaded and the animation is complete.
 ```
 roulette.drawRoulette([
   { gradient: { start: '#cb32e9', end: '#b827e1'}, percent: 100, imgSrc: 'https://mdn.mozillademos.org/files/5397/rhino.jpg'  },
@@ -30,11 +30,11 @@ roulette.drawRoulette([
 ]);
 ```
 
-2. **.rotateRoulette** - начинает анимацию вращения колеса. Возвращает промис окончания вращения анимации.
+2. **.rotateRoulette** - Starts the wheel rotation animation. Returns a promise that resolves when the rotation animation is complete.
 ```
 roulette.rotateRoulette(
   { timeStarted: 1000, angle: 2160 },
 );
 ```
-- Прошедшее время с начала анимации, параметр не обязательный: ```timeStarted: 1000```
-- Угол, на который вращаем колесо, в градусах: ```angle: 2160```
+- Elapsed time since the animation started, parameter is optional: ```timeStarted: 1000```
+- The angle to rotate the wheel, in degrees: ```angle: 2160```
