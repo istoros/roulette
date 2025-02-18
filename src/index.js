@@ -8,13 +8,13 @@ class Roulette {
         this.PI = Math.PI;
         this.state = 0;
         this.isAnimate = false;
-        this.sectorLength = this.PI/200; // отступ между зонами
-        this.decorateBorder = 18; // высота декоративрого бордера
-        this.timerBorder = 4; // высота бордера таймера
-        this.timerBorderColor = '#ffc30b'; // цвет бордеа таймера
-        this.borderColor = 'rgba(0, 0, 0, 0.08)'; // цвет внешнего бордера
-        this.timeCircleAnimation = timeCircleAnimation; // время анимации вращения круга
-        this.paddingTop = 15; // отступ сверху
+        this.sectorLength = this.PI/200;
+        this.decorateBorder = 18;
+        this.timerBorder = 4;
+        this.timerBorderColor = '#ffc30b';
+        this.borderColor = 'rgba(0, 0, 0, 0.08)';
+        this.timeCircleAnimation = timeCircleAnimation;
+        this.paddingTop = 15;
 
         this.initProps();
 
@@ -39,7 +39,7 @@ class Roulette {
             this.canvas.style.height = canvasHeight + 'px';
         }
 
-        this.innerRadius = this.propertis.height * 0.624; // радиус внутреннего круга
+        this.innerRadius = this.propertis.height * 0.624;
         this.lineWidth = this.propertis.height - this.innerRadius - this.paddingTop;
         this.radius = this.innerRadius + this.lineWidth/2;
     }
@@ -70,7 +70,6 @@ class Roulette {
         ctx.drawImage(img, x, y, w, h);
         ctx.restore();
 
-        // бордер
         ctx.strokeStyle = '#fff';
         ctx.lineWidth = 3;
         ctx.stroke();
@@ -179,9 +178,9 @@ class Roulette {
             let imagesLoaded;
 
             if (players == undefined) {
-                players = this.players; // если нет новых игроков, подтягиваем их из состояния
+                players = this.players;
             } else {
-                players[0].imgSrc && (imagesLoaded = 0); // количество загруженных изображений
+                players[0].imgSrc && (imagesLoaded = 0);
                 this.players = players;
             }
 
@@ -189,22 +188,19 @@ class Roulette {
                 this.state = state;
             }
             
-            const length = this.circleState.length; // длина секторов
+            const length = this.circleState.length;
 
             for (let i = 0; i < players.length; i++) {
                 const player = players[players.length - 1 - i];
     
-                // определяем границы сектора
                 player.to = end;
                 player.from = end - player.percent * length / 100;
                 end = end - player.percent * length / 100 - this.sectorLength;
     
-                // если указан градиент - получаем его
                 if (!player.color && player.gradient ) {
                     player.color = this.gradient(player.gradient.start, player.gradient.end);
                 }
     
-                // если указана ссылка на изображение, то загружаем ее
                 if (player.imgSrc && imagesLoaded !== undefined) {
                     player.img = new Image();
                     player.img.src = player.imgSrc;
@@ -220,7 +216,6 @@ class Roulette {
                 }
             }
 
-            // если изображения не нужно грузить, резолвим, не дожидаясь onload
             if (imagesLoaded === undefined) {
                 resolve(players);
             }
@@ -247,16 +242,14 @@ class Roulette {
     }
 
     drawCircle(previousPlayers, currentPlayers, progress, rotate) {
-        this.clear(); // очищаем канву
+        this.clear();
 
-        // если анимации нет, то ставим progress на 1
         if (progress === undefined) {
             progress = 1;
         }
 
         this.ctx.rotate(rotate * this.PI / 180);
 
-        // рисуем каждый сектор
         for (let i = 0; i < currentPlayers.length; i++) {
             const prevPlayer = previousPlayers && (previousPlayers[previousPlayers.length - 1 - i] || {
                 from: this.circleState.start,
@@ -273,38 +266,32 @@ class Roulette {
                 ? prevPlayer.to + (currPlayer.to - prevPlayer.to) * progress
                 : currPlayer.to;
 
-            const r = this.propertis.height - this.paddingTop - this.decorateBorder / 2; // радиус для внешнего бордера
+            const r = this.propertis.height - this.paddingTop - this.decorateBorder / 2;
 
-            this.circle(this.ctx, from, to, currPlayer.color); // рисуем сектор
-            this.circle(this.ctx, from, to, this.borderColor, r, this.decorateBorder); // рисуем бордер для сектора
+            this.circle(this.ctx, from, to, currPlayer.color);
+            this.circle(this.ctx, from, to, this.borderColor, r, this.decorateBorder);
 
-            // если доля игрока больше 5 процентов, то рисуем его процент и аватар
-            // при условии, что колесо свернуто
             if (currPlayer.percent > 5 && this.state === 0 && currPlayer.img) {
                 this.drawPercent(this.ctx, from, to, currPlayer.percent);
                 this.drawUserAvatar(this.ctx, from, to, currPlayer.img);
             }
         }
 
-        // сбрасываем матрницу трансформации и выставляем новый транслейт
         this.setTransform();
         this.setTranslate();
 
-        // если вращение началось, то показываем текущего игрока
         if (this.state === 1) {
             rotate = rotate || 0;
             const img = this.getCurrentPlayerImg(currentPlayers, rotate);
             img && this.drawUserAvatar(this.ctx, 3 / 2 * this.PI, 3 / 2 * this.PI, img);
         }
 
-        // отрисовываем блок селекта
         this.drawTimerBlock();
     }
 
     getCurrentPlayerImg(players, rotate) {
         const angle = 3 * this.PI - (rotate * this.PI / 180 + 3 * this.PI / 2) % (2 * this.PI);
 
-        // находим его индекс
         const i = players.findIndex((player) => {
             return (player.from <= (angle + this.sectorLength) && player.to >= angle);
         });
@@ -316,7 +303,6 @@ class Roulette {
         const previousPlayers = this.copyArray(this.players);
         const currentPlayers = await this.updatePlayersData(null, 1);
 
-        // развертываем колесо
         (timeStarted < 100) && await this.animate({
             duration: 100,
             timing: (t) => {
@@ -328,7 +314,6 @@ class Roulette {
             timeStarted,
         });
  
-        // вращаем
         await this.animate({
             duration: this.timeCircleAnimation - 100,
             timing: (t) => {
